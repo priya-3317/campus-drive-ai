@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusDrive AI Portal</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: #0b1120;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    /* Chat scrollbar styling */
+    #chatMessages::-webkit-scrollbar {
+      width: 5px;
+    }
+    #chatMessages::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="p-6 min-h-screen">
+
+  <!-- Top Navbar -->
+  <header class="flex items-center justify-between pb-6 border-b border-gray-800">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-xl font-bold shadow-md">
+        🎓
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight">CampusDrive <span class="text-indigo-400">AI Portal</span></h1>
+    </div>
+    <div class="flex items-center">
+      <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800 shadow-sm">
+        <span class="w-2.5 h-2.5 mr-2 bg-emerald-400 rounded-full animate-pulse"></span>
+        Drive Active
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <main class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+    
+    <!-- Left Section -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- Top Stat Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-[#161f36] p-4 rounded-xl border border-gray-800 shadow-sm">
+          <p class="text-xs text-gray-400">Applications</p>
+          <p class="text-2xl font-bold mt-1 text-white">12</p>
+        </div>
+        <div class="bg-[#161f36] p-4 rounded-xl border border-gray-800 shadow-sm">
+          <p class="text-xs text-gray-400">Interviews Scheduled</p>
+          <p class="text-2xl font-bold mt-1 text-amber-400">3</p>
+        </div>
+        <div class="bg-[#161f36] p-4 rounded-xl border border-gray-800 shadow-sm">
+          <p class="text-xs text-gray-400">Offers Received</p>
+          <p class="text-2xl font-bold mt-1 text-emerald-400">2</p>
+        </div>
+        <div class="bg-[#161f36] p-4 rounded-xl border border-gray-800 shadow-sm">
+          <p class="text-xs text-gray-400">Avg CTC (Drive)</p>
+          <p class="text-2xl font-bold mt-1 text-white">₹8.5 LPA</p>
+        </div>
+      </div>
+
+      <!-- Bar Chart -->
+      <div class="bg-[#161f36] p-5 rounded-xl border border-gray-800 shadow-sm">
+        <h2 class="text-base font-semibold mb-4 text-gray-200">Department Placement Stats (2026)</h2>
+        <div class="h-64">
+          <canvas id="placementChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Upcoming Drives -->
+      <div class="bg-[#161f36] p-5 rounded-xl border border-gray-800 shadow-sm">
+        <h2 class="text-base font-semibold mb-4 text-gray-200">Upcoming Drives</h2>
+        <div class="space-y-3">
+          
+          <div class="flex items-center justify-between p-3.5 bg-[#0f172a] rounded-lg border border-gray-800">
+            <div>
+              <p class="font-semibold text-sm text-white">Zoho Corporation</p>
+              <p class="text-xs text-gray-400">Role: Software Engineer</p>
+            </div>
+            <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2 rounded-lg font-medium transition">
+              Apply
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between p-3.5 bg-[#0f172a] rounded-lg border border-gray-800">
+            <div>
+              <p class="font-semibold text-sm text-white">TCS Digital</p>
+              <p class="text-xs text-gray-400">Role: Systems Engineer</p>
+            </div>
+            <button class="bg-gray-800 text-gray-400 text-xs px-4 py-2 rounded-lg font-medium cursor-not-allowed">
+              Applied
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Section (Interactive AI Placement Assistant) -->
+    <div class="bg-[#161f36] p-5 rounded-xl border border-gray-800 flex flex-col justify-between h-[680px] shadow-sm">
+      <div class="flex items-center space-x-2 mb-4 pb-3 border-b border-gray-800">
+        <span class="text-lg">🤖</span>
+        <h2 class="text-base font-semibold text-gray-200">AI Placement Assistant</h2>
+      </div>
+
+      <!-- Chat Messages Container -->
+      <div id="chatMessages" class="flex-1 overflow-y-auto space-y-3 pr-2 mb-4">
+        <!-- Default Bot Message -->
+        <div class="flex items-start">
+          <div class="bg-[#0f172a] p-3.5 rounded-xl border border-gray-800 text-sm text-gray-300 leading-relaxed max-w-[88%] shadow">
+            Hello! Ask me anything about upcoming placement drives, resume tips, or interview preparation!
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Field -->
+      <div class="flex items-center space-x-2 pt-3 border-t border-gray-800">
+        <input 
+          id="userInput"
+          type="text" 
+          placeholder="Type your message..." 
+          class="flex-1 bg-[#0f172a] border border-gray-700 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 placeholder-gray-500"
+        >
+        <button 
+          id="sendBtn"
+          class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-sm px-4 py-2 rounded-lg font-medium transition shadow-md">
+          Send
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Script: Chart & Interactive Chatbot -->
+  <script>
+    // 1. Chart Config
+    const ctx = document.getElementById('placementChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['CSE', 'IT', 'ECE', 'EEE', 'MECH'],
+        datasets: [{
+          data: [88, 82, 75, 60, 55],
+          backgroundColor: '#6366f1',
+          borderRadius: 6,
+          barThickness: 45
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { color: '#94a3b8', stepSize: 10 },
+            grid: { color: '#1e293b' }
+          },
+          x: {
+            ticks: { color: '#94a3b8' },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+
+    // 2. Chatbot Logic
+    const chatContainer = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    function getBotReply(query) {
+      const q = query.toLowerCase().trim();
+      
+      if (q.includes('hi') || q.includes('hello') || q.includes('hey')) {
+        return "Hello! How can I assist your placement preparation today? Ask about drives, resumes, or interviews!";
+      } else if (q.includes('zoho')) {
+        return "Zoho Corporation drive is open! Focus on C/Java basics, DSA problem-solving, advanced programming rounds, and HR behavioral questions.";
+      } else if (q.includes('tcs')) {
+        return "TCS Digital status: Applied. Keep practicing numerical reasoning, advanced coding (Python/Java), and system architecture concepts.";
+      } else if (q.includes('resume')) {
+        return "Resume Tip: Keep it clean and 1 page! Highlight key projects, technical skills (Frontend/Backend/AI), and quantify your impact.";
+      } else if (q.includes('interview') || q.includes('prep')) {
+        return "Top tips: Be thorough with your core projects, practice DSA daily on LeetCode/HackerRank, and use the STAR method for HR questions.";
+      } else if (q.includes('ctc') || q.includes('package')) {
+        return "The current average package for this drive is ₹8.5 LPA, with premium roles going higher depending on the technical interview!";
+      } else {
+        return `Got your query: "${query}". I'm analyzing your placement profile... Make sure your projects and core CS fundamentals are interview-ready!`;
+      }
+    }
+
+    function appendMessage(text, isUser = false) {
+      const wrapper = document.createElement('div');
+      wrapper.className = `flex ${isUser ? 'justify-end' : 'items-start'}`;
+
+      const bubble = document.createElement('div');
+      bubble.className = isUser 
+        ? 'bg-indigo-600 text-white p-3 rounded-xl text-sm max-w-[85%] shadow'
+        : 'bg-[#0f172a] text-gray-300 p-3.5 rounded-xl border border-gray-800 text-sm max-w-[88%] shadow leading-relaxed';
+      
+      bubble.innerText = text;
+      wrapper.appendChild(bubble);
+      chatContainer.appendChild(wrapper);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function sendMessage() {
+      const msg = userInput.value.trim();
+      if (!msg) return;
+
+      // Append User message
+      appendMessage(msg, true);
+      userInput.value = '';
+
+      // Bot typing & reply with slight delay
+      setTimeout(() => {
+        const reply = getBotReply(msg);
+        appendMessage(reply, false);
+      }, 500);
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>
